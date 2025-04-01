@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import matter from 'gray-matter';
 
 const contentDirectory = path.join(process.cwd(), 'content');
@@ -9,7 +9,13 @@ interface Frontmatter {
   title?: string;
   date?: string;
   tags?: string[];
-  [key: string]: any; // Allow other frontmatter properties
+  description?: string;
+  author?: string;
+  category?: string;
+  status?: 'draft' | 'published';
+  featured?: boolean;
+  image?: string;
+  // Add any other specific frontmatter fields you need
 }
 
 interface ContentItem extends Frontmatter {
