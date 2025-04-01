@@ -4,6 +4,22 @@ import matter from 'gray-matter';
 
 const contentDirectory = path.join(process.cwd(), 'content');
 
+// Define interfaces for content types
+interface Frontmatter {
+  title?: string;
+  date?: string;
+  tags?: string[];
+  [key: string]: any; // Allow other frontmatter properties
+}
+
+interface ContentItem extends Frontmatter {
+  slug: string;
+}
+
+interface SearchResult extends ContentItem {
+  type: string;
+}
+
 export function getContentBySlug(contentType: string, slug: string) {
   const fullPath = path.join(contentDirectory, contentType, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
@@ -11,12 +27,12 @@ export function getContentBySlug(contentType: string, slug: string) {
   
   return {
     slug,
-    frontmatter: data,
+    frontmatter: data as Frontmatter,
     content
   };
 }
 
-export function getAllContent(contentType: string) {
+export function getAllContent(contentType: string): ContentItem[] {
   const contentTypePath = path.join(contentDirectory, contentType);
   
   // Check if directory exists
@@ -27,17 +43,17 @@ export function getAllContent(contentType: string) {
   const filenames = fs.readdirSync(contentTypePath);
   
   return filenames
-    .filter(filename => filename.endsWith('.md'))
-    .map(filename => {
+    .filter((filename: string) => filename.endsWith('.md'))
+    .map((filename: string) => {
       const slug = filename.replace(/\.md$/, '');
       const { frontmatter } = getContentBySlug(contentType, slug);
       
       return {
         slug,
         ...frontmatter
-      };
+      } as ContentItem;
     })
-    .sort((a, b) => {
+    .sort((a: ContentItem, b: ContentItem) => {
       // Sort by date if available
       if (a.date && b.date) {
         return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -47,21 +63,21 @@ export function getAllContent(contentType: string) {
 }
 
 // Get content types (directories inside content folder)
-export function getContentTypes() {
+export function getContentTypes(): string[] {
   return fs.readdirSync(contentDirectory, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+    .filter((dirent: fs.Dirent) => dirent.isDirectory())
+    .map((dirent: fs.Dirent) => dirent.name);
 }
 
 // Search content across all types
-export function searchContent(query: string) {
+export function searchContent(query: string): SearchResult[] {
   const contentTypes = getContentTypes();
-  const results = [];
+  const results: SearchResult[] = [];
   
-  contentTypes.forEach(type => {
+  contentTypes.forEach((type: string) => {
     const typeContent = getAllContent(type);
     
-    typeContent.forEach(item => {
+    typeContent.forEach((item: ContentItem) => {
       // Simple search in title and tags
       const titleMatch = item.title?.toLowerCase().includes(query.toLowerCase());
       const tagsMatch = item.tags?.some(tag => 
