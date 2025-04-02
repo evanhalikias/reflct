@@ -1,15 +1,15 @@
 import { InlineCode } from "@/once-ui/components";
 
 const person = {
-  firstName: "Evan",
-  lastName: "Halikias",
+  firstName: "Selene",
+  lastName: "Yu",
   get name() {
     return `${this.firstName} ${this.lastName}`;
   },
-  // role: "Using Tech/AI To See Myself More Clearly",
+  role: "Design Engineer",
   avatar: "/images/avatar.jpg",
-  location: "America/Los_Angeles", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
-  languages: [], // optional: Leave the array empty if you don't want to display languages
+  location: "Asia/Jakarta", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
+  languages: ["English", "Bahasa"], // optional: Leave the array empty if you don't want to display languages
 };
 
 const newsletter = {
@@ -29,33 +29,34 @@ const social = [
   {
     name: "GitHub",
     icon: "github",
-    link: "https://github.com/evanhalikias",
+    link: "https://github.com/once-ui-system/nextjs-starter",
   },
   {
     name: "LinkedIn",
     icon: "linkedin",
-    link: "https://www.linkedin.com/in/evanhalikias/",
+    link: "https://www.linkedin.com/company/once-ui/",
   },
   {
-    name: "Instagram",
-    icon: "instagram",
-    link: "https://www.instagram.com/evanhalikias/",
+    name: "X",
+    icon: "x",
+    link: "",
   },
   {
     name: "Email",
     icon: "email",
-    link: "mailto:evan.halikias@gmail.com",
+    link: "mailto:example@gmail.com",
   },
 ];
 
 const home = {
   label: "Home",
-  title: `Reflct`,
-  description: `AI Hacks & Musings from ${person.name}`,
-  headline: <>Welcome to Reflct</>,
+  title: `${person.name}'s Portfolio`,
+  description: `Portfolio website showcasing my work as a ${person.role}`,
+  headline: <>Design engineer and builder</>,
   subline: (
     <>
-      See yourself more clearly using AI.
+      I'm Selene, a design engineer at <InlineCode>FLY</InlineCode>, where I craft intuitive
+      <br /> user experiences. After hours, I build my own projects.
     </>
   ),
 };
@@ -80,7 +81,9 @@ const about = {
     title: "Introduction",
     description: (
       <>
-        Evan is an LA-based product manager/builder with a passion for self-improvement, technology, and music.
+        Selene is a Jakarta-based design engineer with a passion for transforming complex challenges
+        into simple, elegant design solutions. Her work spans digital interfaces, interactive
+        experiences, and the convergence of design and technology.
       </>
     ),
   },
