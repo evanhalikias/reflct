@@ -38,7 +38,7 @@ function BlogPost({ post }) {
   return (
     <Link href={`/blog/${post.slug}`} className="blog-post-link">
       <Column gap="s" className="blog-post">
-        <Heading variant="title-strong-m">{post.metadata.title}</Heading>
+        <Heading variant="heading-strong-m">{post.metadata.title}</Heading>
         {post.metadata.publishedAt && (
           <Text variant="body-default-s" onBackground="neutral-weak">
             {new Date(post.metadata.publishedAt).toLocaleDateString()}
