@@ -62,7 +62,7 @@ export function generateMetadata({ params: { slug } }: BlogParams) {
 }
 
 export default function Blog({ params }: BlogParams) {
-  let post = getPosts(["src", "app", "blog", "posts"]).find((post) => post.slug === params.slug);
+  let post = getPosts(["content"]).find((post) => post.slug === params.slug);
 
   if (!post) {
     notFound();
@@ -98,14 +98,16 @@ export default function Blog({ params }: BlogParams) {
         }}
       />
       <Button href="/blog" weight="default" variant="tertiary" size="s" prefixIcon="chevronLeft">
-        Posts
+        Back to Posts
       </Button>
       <Heading variant="display-strong-s">{post.metadata.title}</Heading>
       <Row gap="12" vertical="center">
         {avatars.length > 0 && <AvatarGroup size="s" avatars={avatars} />}
-        <Text variant="body-default-s" onBackground="neutral-weak">
-          {post.metadata.publishedAt && formatDate(post.metadata.publishedAt)}
-        </Text>
+        {post.metadata.publishedAt && (
+          <Text variant="body-default-s" onBackground="neutral-weak">
+            {new Date(post.metadata.publishedAt).toLocaleDateString()}
+          </Text>
+        )}
       </Row>
       <Column as="article" fillWidth>
         <CustomMDX source={post.content} />

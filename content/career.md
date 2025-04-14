@@ -1,6 +1,6 @@
 
 Top priorities
-- [ ] Update resume
+- [ ] Update [[Resume]]
 - [ ] Update linkedin
 - [ ] List of people to reach out to
 - [ ] Write / send messages

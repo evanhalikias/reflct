@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "career.md",
+                "file": "Career.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "career"
+              "title": "Career"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "career.md",
+                "file": "Career.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for career"
+              "title": "Backlinks for Career"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "career.md",
+                "file": "Career.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from career"
+              "title": "Outgoing links from Career"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "career.md",
+                "file": "Career.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of career"
+              "title": "Outline of Career"
             }
           }
         ]
@@ -168,10 +168,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "c169418f252f3800",
+  "active": "069d83f9666f5ebc",
   "lastOpenFiles": [
+    "Resume.md",
+    "Career.md",
     "internal/protocols feedback.md",
-    "career.md",
     "internal/Untitled"
   ]
 }

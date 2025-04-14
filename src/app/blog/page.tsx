@@ -1,8 +1,9 @@
-import { Column, Flex, Heading } from "@/once-ui/components";
+import { Column, Flex, Heading, Text } from "@/once-ui/components";
 import { Mailchimp } from "@/components";
-import { Posts } from "@/components/blog/Posts";
+import { getPosts } from "@/app/utils/utils";
 import { baseURL } from "@/app/resources";
 import { blog, person, newsletter } from "@/app/resources/content";
+import Link from "next/link";
 
 export async function generateMetadata() {
   const title = blog.title;
@@ -33,7 +34,34 @@ export async function generateMetadata() {
   };
 }
 
+function BlogPost({ post }) {
+  return (
+    <Link href={`/blog/${post.slug}`} className="blog-post-link">
+      <Column gap="s" className="blog-post">
+        <Heading variant="title-strong-m">{post.metadata.title}</Heading>
+        {post.metadata.publishedAt && (
+          <Text variant="body-default-s" onBackground="neutral-weak">
+            {new Date(post.metadata.publishedAt).toLocaleDateString()}
+          </Text>
+        )}
+        {post.metadata.summary && (
+          <Text variant="body-default-m" onBackground="neutral-medium">
+            {post.metadata.summary}
+          </Text>
+        )}
+        {post.metadata.tag && (
+          <Text variant="label-strong-s" onBackground="neutral-weak">
+            {post.metadata.tag}
+          </Text>
+        )}
+      </Column>
+    </Link>
+  );
+}
+
 export default function Blog() {
+  const posts = getPosts(["content"]);  // Get posts from content directory
+
   return (
     <Column maxWidth="s">
       <script
@@ -61,9 +89,10 @@ export default function Blog() {
       <Heading marginBottom="l" variant="display-strong-s">
         {blog.title}
       </Heading>
-      <Column fillWidth flex={1}>
-        <Posts range={[1, 3]} thumbnail />
-        <Posts range={[4]} columns="2" />
+      <Column fillWidth gap="l">
+        {posts.map((post) => (
+          <BlogPost key={post.slug} post={post} />
+        ))}
       </Column>
       {newsletter.display && <Mailchimp newsletter={newsletter} />}
     </Column>
