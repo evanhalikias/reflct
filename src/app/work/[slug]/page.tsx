@@ -105,7 +105,7 @@ export default function Project({ params }: WorkParams) {
         </Button>
         <Heading variant="display-strong-s">{post.metadata.title}</Heading>
       </Column>
-      {post.metadata.images.length > 0 && (
+      {post.metadata.images && post.metadata.images.length > 0 && (
         <SmartImage
           priority
           aspectRatio="16 / 9"
