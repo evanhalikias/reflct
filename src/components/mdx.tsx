@@ -1,12 +1,13 @@
 import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
 import React, { ReactNode } from "react";
+import Link from 'next/link';
 
-import { SmartImage, SmartLink, Text } from "@/once-ui/components";
-import { CodeBlock } from "@/once-ui/modules";
-import { HeadingLink } from "@/components";
+import { SmartImage, SmartLink, Text } from "@/once-ui/components/index";
+import { CodeBlock } from "@/once-ui/modules/index";
+import { HeadingLink } from "@/components/index";
 
-import { TextProps } from "@/once-ui/interfaces";
-import { SmartImageProps } from "@/once-ui/components/SmartImage";
+import type { TextProps } from "@/once-ui/interfaces";
+import type { SmartImageProps } from "@/once-ui/components/SmartImage";
 
 type TableProps = {
   data: {
@@ -35,26 +36,86 @@ function Table({ data }: TableProps) {
   );
 }
 
-type CustomLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  href: string;
-  children: ReactNode;
-};
+// Custom list item component that handles both checkboxes and wiki links
+function CustomListItem({ children }: { children: ReactNode }) {
+  if (typeof children !== 'string') {
+    return <li>{children}</li>;
+  }
 
-function CustomLink({ href, children, ...props }: CustomLinkProps) {
-  if (href.startsWith("/")) {
+  const text = children.toString();
+  
+  // Check if this is a checkbox item
+  const checkboxMatch = text.match(/^\[([ x])\]\s*(.+)$/);
+  
+  if (checkboxMatch) {
+    const [_, checked, content] = checkboxMatch;
+    
+    // Process wiki links in the content
+    const processedContent = content.replace(/\[\[(.*?)\]\]/g, (match, pageName) => {
+      const slug = pageName.toLowerCase().replace(/\s+/g, '-').replace(/\.md$/, '');
+      return `[[${pageName}]]`; // Keep the original format for CustomLink to process
+    });
+    
     return (
-      <SmartLink href={href} {...props}>
-        {children}
+      <li style={{ 
+        listStyle: 'none', 
+        display: 'flex', 
+        alignItems: 'center',
+        gap: '0.5rem'
+      }}>
+        <input
+          type="checkbox"
+          checked={checked === 'x'}
+          readOnly
+          style={{
+            margin: 0,
+            cursor: 'pointer'
+          }}
+        />
+        <CustomLink href={`[[${processedContent}]]`}>
+          {processedContent}
+        </CustomLink>
+      </li>
+    );
+  }
+
+  return <li>{text}</li>;
+}
+
+// Enhanced CustomLink to handle wiki links
+function CustomLink({ href, children, ...props }: { href: string; children: ReactNode }) {
+  // Handle wiki-style links
+  if (href.startsWith('[[') && href.endsWith(']]')) {
+    const pageName = href.slice(2, -2);
+    // Extract the actual page name if it contains wiki syntax
+    const actualPageName = pageName.match(/\[\[(.*?)\]\]/) ? 
+      pageName.match(/\[\[(.*?)\]\]/)[1] : 
+      pageName;
+    
+    const slug = actualPageName.toLowerCase().replace(/\s+/g, '-').replace(/\.md$/, '');
+    
+    return (
+      <SmartLink 
+        href={`/blog/${slug}`}
+        style={{
+          color: 'var(--color-primary)',
+          textDecoration: 'none',
+          borderBottom: '1px dashed currentColor'
+        }}
+        {...props}
+      >
+        {actualPageName}
       </SmartLink>
     );
   }
 
+  // Handle regular links
+  if (href.startsWith("/")) {
+    return <SmartLink href={href} {...props}>{children}</SmartLink>;
+  }
+
   if (href.startsWith("#")) {
-    return (
-      <a href={href} {...props}>
-        {children}
-      </a>
-    );
+    return <a href={href} {...props}>{children}</a>;
   }
 
   return (
@@ -138,6 +199,7 @@ const components = {
   h6: createHeading(6) as any,
   img: createImage as any,
   a: CustomLink as any,
+  li: CustomListItem as any,
   Table,
   CodeBlock,
 };
@@ -146,9 +208,39 @@ type CustomMDXProps = MDXRemoteProps & {
   components?: typeof components;
 };
 
+// Add some CSS
+const styles = `
+  .wiki-link {
+    color: var(--color-primary, #00ff00);
+    text-decoration: none;
+    border-bottom: 1px dashed currentColor;
+  }
+  .wiki-link:hover {
+    border-bottom-style: solid;
+  }
+  .wiki-link-missing {
+    color: var(--color-error, #ff0000);
+    border-bottom-style: dotted;
+  }
+`;
+
+// Add a function to check if a page exists
+async function checkPageExists(slug: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/check-page?slug=${slug}`);
+    const data = await response.json();
+    return data.exists;
+  } catch (error) {
+    console.error('Error checking page existence:', error);
+    return false;
+  }
+}
+
 export function CustomMDX(props: CustomMDXProps) {
   return (
-    // @ts-ignore: Suppressing type error for MDXRemote usage
-    <MDXRemote {...props} components={{ ...components, ...(props.components || {}) }} />
+    <>
+      <style>{styles}</style>
+      <MDXRemote {...props} components={{ ...components, ...(props.components || {}) }} />
+    </>
   );
 }

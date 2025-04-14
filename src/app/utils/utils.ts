@@ -32,6 +32,19 @@ function getMDXFiles(dir: string) {
   );
 }
 
+function processObsidianContent(content: string): string {
+  // Convert wiki links to markdown links
+  content = content.replace(/\[\[(.*?)\]\]/g, (match, pageName) => {
+    if (pageName.includes('|')) {
+      const [page, displayText] = pageName.split('|');
+      return `[${displayText}]([[${page}]])`;
+    }
+    return `[${pageName}]([[${pageName}]])`;
+  });
+
+  return content;
+}
+
 function readMDXFile(filePath: string) {
   if (!fs.existsSync(filePath)) {
     notFound();
@@ -40,16 +53,19 @@ function readMDXFile(filePath: string) {
   const rawContent = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(rawContent);
   
+  // Process Obsidian-specific syntax
+  const processedContent = processObsidianContent(content);
+  
   let title = data.title;
   if (!title) {
-    const titleMatch = content.match(/^#\s+(.+)$/m);
+    const titleMatch = processedContent.match(/^#\s+(.+)$/m);
     title = titleMatch ? titleMatch[1] : path.basename(filePath, path.extname(filePath));
   }
 
   const metadata: Metadata = {
     title,
     publishedAt: data.publishedAt,
-    summary: data.summary || getFirstParagraph(content),
+    summary: data.summary || getFirstParagraph(processedContent),
     image: data.image || "",
     images: data.images || [],
     tag: data.tag || "Note",
@@ -57,7 +73,7 @@ function readMDXFile(filePath: string) {
     link: data.link || "",
   };
 
-  return { metadata, content };
+  return { metadata, content: processedContent };
 }
 
 function getFirstParagraph(content: string): string {
