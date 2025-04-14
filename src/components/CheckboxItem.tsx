@@ -15,7 +15,7 @@ export function CheckboxItem({ checked, children }: CheckboxItemProps) {
     }}>
       <input
         type="checkbox"
-        checked={checked === true || checked === 'true'}
+        checked={checked}
         readOnly
         style={{
           marginRight: '0.5em',
