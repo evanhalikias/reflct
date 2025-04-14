@@ -12,6 +12,10 @@ export function Posts({ range, columns = "1", thumbnail = false }: PostsProps) {
   let allBlogs = getPosts(["src", "app", "blog", "posts"]);
 
   const sortedBlogs = allBlogs.sort((a, b) => {
+    // If either post doesn't have a date, sort it to the end
+    if (!a.metadata.publishedAt) return 1;
+    if (!b.metadata.publishedAt) return -1;
+    // If both have dates, compare them
     return new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime();
   });
 
